@@ -69,7 +69,7 @@ window.onload = function () {
 			content: 'Keep the previous dependencies img when generating a new one.',
 		});
 		tippy('#tip-settings', {
-			content: 'Customize nlpshala according to your needs.',
+			content: 'Customize OneNLP according to your needs.',
 		});
 		tippy('#tip-save', {
 			content: 'Create a snippet and use it later!',
@@ -267,7 +267,7 @@ function download(filename, text) {
 // Start file download.
 document.getElementById("save_output").addEventListener("click", function () {
 	var text = document.querySelector("#segment-main").textContent;
-	var filename = "NLPShala-ouput.txt";
+	var filename = "OneNLP-ouput.txt";
 
 	download(filename, text);
 }, false);
