@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block navbar %}
+<div class="navtabs swinginfes">
+   <div class="navtab_wrapper navactive">
+      <svg xmlns="http://www.w3.org/2000/svg"  width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <rect x="4" y="4" width="6" height="6" rx="1" />
+         <rect x="4" y="14" width="6" height="6" rx="1" />
+         <rect x="14" y="14" width="6" height="6" rx="1" />
+         <line x1="14" y1="7" x2="20" y2="7" />
+         <line x1="17" y1="4" x2="17" y2="10" />
+       </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:dashboard' %}'">Dashboard</span>
+   </div>
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="12" r="9" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(72 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(144 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(216 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(288 12 12)" />
+       </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:aboutus' %}'">About</span>
+   </div>
+   {% if user.is_authenticated %}
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="7" r="4" />
+         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:logout' %}'">LogOut</span>
+   </div>
+   {% else %}
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="7" r="4" />
+         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      </svg>
+      <span onclick="window.location.href='{{ login_url }}'">Login</span>
+   </div>
+   {% endif %}
+</div>
+{% endblock navbar %}
+
+
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+   #app {
+      min-height: 500px;
+   }
+</style>
+
+<div style="margin-top: 56px;">
+<main id="app" class="py-4 min-vh-100" style="background-color: rgb(246, 246, 246);">
+   <div class="container">
+      {% if not snippets %}
+      <p style="text-align:center; margin-top: 90px;">You have 0 snippets , create one using <strong> + Create</strong> <br> button at the top/bottom bar.</p>
+      <style>
+         #table-view {
+            display: none;
+         }
+      </style>
+      {% endif %}
+      <div id="table-view" class="dash-container">
+         <div class="dash-wrapper">
+            <table class="table table-hover">
+               <thead class="theadzx-inverse">
+                  <tr>
+                     <th>Title</th>
+                     <th>Content</th>
+                     <th>Updated On</th>
+                     <th>Actions</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {% for i in snippets %}
+                  <tr>
+                     <th scope="row">{{ i.title}}</th>
+                     <td>{{ i.content|truncatechars:255 }}</td>
+                     <td>{{ i.updated }}</td>
+                     <td>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="del-btn" onclick="delete_link('{{ i.title }}')"  width="25" height="25" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fd0061" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                           <rect x="4" y="4" width="16" height="16" rx="2" />
+                           <path d="M10 10l4 4m0 -4l-4 4" />
+                        </svg>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" title='{{ i.title }}' content='{{ i.content }}' onclick="load_snippet(this.getAttribute('title'), this.getAttribute('content'))" style="cursor: pointer;" width="25" height="25" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                           <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+                           <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+                         </svg>
+                     </td>
+                  </tr>
+                  {% endfor %}
+               </tbody>
+            </table>
+         </div>
+      </div>
+
+      <style>
+         .snippetbtn {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            border: 0;
+            margin: auto;
+            color: #fff;
+            cursor: pointer;
+            background: #6A27FF;
+            outline: none;
+            transition: 1s all;
+         }
+      </style>
+      <div class="text-center py-5">
+            <button onclick="window.location.href='{% url 'onenlp_app:home' %}'" class="snippetbtn" type="button">
+            Create New snippet +
+            </button> 
+      </div>
+</main>
+</div>
+<script>
+   function delete_link(link) {
+      swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this action.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+         })
+         .then((willDelete) => {
+            if (willDelete) {
+   
+               fetch("{% url 'onenlp_app:delete' %}", {
+                     method: 'POST',
+                     headers: {
+                        'Content-Type': 'application/json',
+                        "X-CSRFToken": getCookie("csrftoken"),
+                     },
+                     body: JSON.stringify({
+                        link: link
+                     }),
+                  })
+                  .then(response => response.text())
+                  .then(data => {
+                     swal("Your snippet has been deleted!", {
+                        icon: "success",
+                     });
+                     window.location.href = window.location.href;
+                  })
+                  .catch((error) => {
+                     toast(error);
+                  });
+   
+            } else {
+               swal("Your snippet is not deleted.");
+            }
+         });
+   }
+
+   function load_snippet(t, c) {
+      var url = new URL(location.origin);
+var search_params = url.searchParams;
+
+// add "topic" parameter
+search_params.set('title', t);
+search_params.set('content', c);
+url.search = search_params.toString();
+var new_url = url.toString();
+
+location.href = new_url;
+}
+</script>
+{% endblock content %}

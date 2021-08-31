@@ -1,0 +1,458 @@
+{% extends "./base.html" %}
+{% load static %}
+
+
+{% block navbar %}
+<div class="navtabs swinginfes">
+   <div class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg"  width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <rect x="4" y="4" width="6" height="6" rx="1" />
+         <rect x="4" y="14" width="6" height="6" rx="1" />
+         <rect x="14" y="14" width="6" height="6" rx="1" />
+         <line x1="14" y1="7" x2="20" y2="7" />
+         <line x1="17" y1="4" x2="17" y2="10" />
+       </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:dashboard' %}'">Dashboard</span>
+   </div>
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="12" r="9" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(72 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(144 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(216 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(288 12 12)" />
+       </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:aboutus' %}'">About</span>
+   </div>
+   {% if user.is_authenticated %}
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="7" r="4" />
+         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:logout' %}'">LogOut</span>
+   </div>
+   {% else %}
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="7" r="4" />
+         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      </svg>
+      <span onclick="window.location.href='{{ login_url }}'">Login</span>
+   </div>
+   {% endif %}
+</div>
+{% endblock navbar %}
+
+{% block content %}
+<!-- === NLPShala Board Popup === -->
+<div class="settings-container" id="popm">
+  <div class="settings-popup">
+     <div class="pop-head">
+        <p class="pop-heading" id="pop-h">Sentiment Analysis</p>
+        <svg id="pop-close" xmlns="http://www.w3.org/2000/svg"  width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+           <circle cx="12" cy="12" r="9" />
+           <path d="M10 10l4 4m0 -4l-4 4" />
+        </svg>
+     </div>
+     <div class="pop-item" id="pop-desc">
+        <ul id="popz"></ul>
+     </div>
+  </div>
+</div>
+
+<!-- === NLPShala APP Settings === -->
+<div class="nlp-settings-container" id="settings-pop">
+   <div class="nlp-settings-popup">
+      <div class="nlp-pop-head">
+         <p class="nlp-pop-heading" id="settings-head">NLPShala Settings</p>
+         <svg id="nlp-pop-close" xmlns="http://www.w3.org/2000/svg"  width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <circle cx="12" cy="12" r="9" />
+            <path d="M10 10l4 4m0 -4l-4 4" />
+         </svg>
+      </div>
+      <div class="nlp-pop-item">
+         Animations   
+         <label class="nlp-switch">
+            <input id="anim" type="checkbox" checked/>    
+            <div></div>
+         </label>
+      </div>
+      <div class="nlp-pop-item">
+         Show ToolsTips   
+         <label class="nlp-switch">
+            <input id="tooltips" type="checkbox" checked/>    
+            <div></div>
+         </label>
+      </div>
+   </div>
+ </div>
+<!-- =========== POP CONTENT =============== -->
+<div class="pop-container" id="pop">
+  <div class="pop-content">
+     <ul id="pop-ul"></ul>
+  </div>
+</div>
+<div class="pg"></div>
+<div class="basic-c">
+  <div class="gui-grid">
+     <div class="grid-pan1">
+        <!-- top controllers  -->
+        <div class="option-panel">
+           <div class="op-left">
+              <span class="title">Settings</span>
+              <span id="tip-settings"><svg id="settings" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+               <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+               <circle cx="14" cy="6" r="2" />
+               <line x1="4" y1="6" x2="12" y2="6" />
+               <line x1="16" y1="6" x2="20" y2="6" />
+               <circle cx="8" cy="12" r="2" />
+               <line x1="4" y1="12" x2="6" y2="12" />
+               <line x1="10" y1="12" x2="20" y2="12" />
+               <circle cx="17" cy="18" r="2" />
+               <line x1="4" y1="18" x2="15" y2="18" />
+               <line x1="19" y1="18" x2="20" y2="18" />
+             </svg></span>
+           </div>
+           <!-- ========= SENTIMENT Analysis ========= -->
+           <div class="left-controls">
+              <button id="tip-sentiment" onclick="get_sentiment()">
+                 Sentiment Analysis  
+                 <svg xmlns="http://www.w3.org/2000/svg" class="" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="9" y1="9" x2="9.01" y2="9" />
+                    <line x1="15" y1="9" x2="15.01" y2="9" />
+                    <path d="M8 13a4 4 0 1 0 8 0m0 0h-8" />
+                 </svg>
+              </button>
+              <span>
+                 <!-- =========== Create snippets ============== -->
+                 <svg id="tip-save" xmlns="http://www.w3.org/2000/svg" onclick="save_snippet()" class="icon" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <circle cx="12" cy="12" r="9" />
+                  <line x1="9" y1="12" x2="15" y2="12" />
+                  <line x1="12" y1="9" x2="12" y2="15" />
+                </svg>
+
+
+                 <!-- ======= Oppopsite words =========== -->
+                 <svg id="tip-opp" onclick="get_opposite()" xmlns="http://www.w3.org/2000/svg" class="icon" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M7.038 4.5a9 9 0 0 0 -2.495 2.47" />
+                    <path d="M3.186 10.209a9 9 0 0 0 0 3.508" />
+                    <path d="M4.5 16.962a9 9 0 0 0 2.47 2.495" />
+                    <path d="M10.209 20.814a9 9 0 0 0 3.5 0" />
+                    <path d="M16.962 19.5a9 9 0 0 0 2.495 -2.47" />
+                    <path d="M20.814 13.791a9 9 0 0 0 0 -3.508" />
+                    <path d="M19.5 7.038a9 9 0 0 0 -2.47 -2.495" />
+                    <path d="M13.791 3.186a9 9 0 0 0 -3.508 -.02" />
+                    <path d="M12 8l-2 4h4l-2 4" />
+                    <path d="M12 21a9 9 0 0 0 0 -18" />
+                 </svg>
+                 <!-- ============ Entity ============ -->
+                 <!-- <svg id="tip-entity"  onclick="get_entity()" xmlns="http://www.w3.org/2000/svg" class="icon" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="6" cy="18" r="2" />
+                    <circle cx="18" cy="6" r="2" />
+                    <line x1="7.5" y1="16.5" x2="16.5" y2="7.5" />
+                 </svg> -->
+                 <!-- ================ USAGE ================ -->
+                 <svg id="tip-usage" onclick="get_usage()" xmlns="http://www.w3.org/2000/svg" class="icon" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                    <polyline points="11 12 12 12 12 16 13 16" />
+                 </svg>
+              </span>
+           </div>
+        </div>
+        <!-- editor panel  -->
+        <div class="gui-main">
+           <div class="pan1">
+              <span class="icon" id="in_del">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <line x1="4" y1="7" x2="20" y2="7" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                 </svg>
+              </span>
+              <!-- Editor text part -->
+              <div contentEditable="true" id="input_text">{{ content }}</div>
+              <!-- bottom controllers -->
+              <div class="bottom-pan">
+                 <span id="character_counts">325/400 Characters</span>
+                 <button class="btn btn-editor" id="process_it">
+                    NLP it! 
+                    <svg style="margin-left: 10px;" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="28" height="28" viewBox="0 0 24 24" stroke-width="1.5" stroke="#FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                       <line x1="10" y1="14" x2="21" y2="3" />
+                       <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" />
+                    </svg>
+                 </button>
+              </div>
+           </div>
+           <div class="pan2">
+              <!-- Editor text part -->
+              <div>
+                 <div class="text-container">
+                    <div class="output-wrapper" id="segment-main"></div>
+                 </div>
+              </div>
+              <!-- bottom controllers -->
+              <div class="bottom-pan">
+                 <span id="sentence_counts">0 Sentences</span>
+                 <div class="slab">
+                    <!-- ========== RESET ========== -->
+                    <svg id="out_del" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-x" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                       <circle cx="12" cy="12" r="9" />
+                       <path d="M10 10l4 4m0 -4l-4 4" />
+                    </svg>
+                    <!-- ==== save ======= -->
+                    <svg id="save_output" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                       <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                       <polyline points="7 11 12 16 17 11" />
+                       <line x1="12" y1="4" x2="12" y2="16" />
+                    </svg>
+                    <!--======= copy ===== -->
+                    <svg id="copy_output" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#651FFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                       <rect x="8" y="8" width="12" height="12" rx="2" />
+                       <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+                    </svg>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+<div class="basic-c ">
+  <div class="wrapper-d">
+     <!-- ====== MOST COMMON SECTION ===== -->
+     <div class="section d-pan1">
+        <div class="d-title">
+           <span>Most Common Words</span>
+           <span id="reload_mcw">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise" width="27" height="27" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00C9A7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                 <path d="M4.05 11a8 8 0 1 1 .5 4m-.5 5v-5h5" />
+              </svg>
+           </span>
+        </div>
+        <div id="mcw_tags" class="inner d-content">
+           <span class="block">happy</span>
+           <span class="block">happy</span>
+           <span class="block">happy</span>
+           <span class="block">happy</span>
+        </div>
+        <div class="bottom-pan">
+           <button class="btn" id="load_mcw">
+              Load more 
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00C9A7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                 <circle cx="12" cy="12" r="9" />
+                 <line x1="9" y1="12" x2="15" y2="12" />
+                 <line x1="12" y1="9" x2="12" y2="15" />
+              </svg>
+           </button>
+           <button class="btn" id="copy_mcw">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#00C9A7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                 <rect x="8" y="8" width="12" height="12" rx="2" />
+                 <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+              </svg>
+           </button>
+        </div>
+     </div>
+     <!-- ====== POS SECTION ===== -->
+     <div class="section d-pan2">
+        <div class="d-title">
+           Parts Of Speech
+        </div>
+        <div class="inner d-content">
+           <div class="vertical-tabs">
+              <ul class="tabs vertical" data-tab="">
+                 <li class="tab-title active"><a href="#noun" aria-selected="true" tabindex="0">Noun</a></li>
+                 <li class="tab-title"><a href="#verb" aria-selected="false" tabindex="-1">Verb</a></li>
+                 <li class="tab-title"><a href="#adverb" aria-selected="false" tabindex="-1">Adverb</a></li>
+                 <li class="tab-title"><a href="#posmagic" aria-selected="false" tabindex="-1">POS Magic</a></li>
+              </ul>
+              <div class="tabs-content">
+                 <div class="content active" id="noun" aria-hidden="false" >
+                    <p>Nouns will appear here...</p>
+                 </div>
+                 <div class="content" id="verb" aria-hidden="true" tabindex="-1">
+                    <p>verb will appear here...</p>
+                 </div>
+                 <div class="content" id="adverb" aria-hidden="true" tabindex="-1">
+                    <p>adverb will appear here...</p>
+                 </div>
+                 <div class="content" id="posmagic" aria-hidden="true" tabindex="-1">
+                    <p>posmagic will appear here...</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+</div>
+<div class="basic-c ">
+  <div class="wrapper-d">
+     <!-- ====== SUMMARY SECTION ===== -->
+     <div class="section d-pan2">
+        <div class="d-title">
+           Summary
+        </div>
+        <div class="inner d-content">
+           <p class="t-grey">Easily generate summary of your content!</p>
+           <div class="summary-area" id="summary_output">
+              ...
+           </div>
+           <div class="bottom-pan">
+              <button class="btn btn-green" id="summary_generate">Generate</button>
+           </div>
+        </div>
+     </div>
+     <!-- ============ Phrase Matcher ================= -->
+     <div class="section d-pan2">
+        <div class="d-title">
+           Phrase Matcher
+        </div>
+        <div class="inner e-content">
+           <p class="t-grey">Drop in your desired matching words & easily extract them!</p>
+           <div class="d-console">
+              <p>Paste the texts:</p>
+              <input name='tags' placeholder='write some words...' value=''>
+           </div>
+           <div class="summary-area" id="phrases_output" style="min-height: 0;">
+            ...
+            </div>
+           <div class="bottom-pan">
+              <button class="btn btn-green" id="ph_extract">Extract</button>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+<div class="basic-c">
+  <div class="wrapper-d">
+     <!-- ====== Visualization SECTION ===== -->
+     <div class="section d-pan1">
+        <div class="d-title">
+           Visualization
+        </div>
+        <div class="inner e-content">
+           <canvas id="oilChart" width="300" height="200"></canvas>
+        </div>
+     </div>
+     <!-- ====== DEPENDENCY VISUALIZER ===== -->
+     <div class="section d-pan2">
+        <div class="d-title">
+           <span>Dependency Visualizer</span>
+           <span id="tip-keep"> <div class="sss-container" style="position:relative;">
+            <label class="switch"><input type="checkbox" id="keep"/>    <div></div>
+            </label>
+          </div></span>
+        </div>
+        <div class="inner d-content">
+           <p class="t-grey">Get Dependency parsing between tag's relationsip visually!</p>
+
+           <section class="dropsel">
+            <div class="iosr">Choose a sentence:</div>
+            <select id="sel-sents" class="selectbor">
+               <option value="none">none</option>
+            </select>
+         </section>
+         <div id="out_svg"></div>
+        </div>
+        <div class="bottom-pan">
+           <button class="btn btn-green" id="dependency_generate">Generate</button>
+        </div>
+     </div>
+  </div>
+</div>
+<div class="pg"></div>
+<!-- === Tooltip . Tippy scripts === -->
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+
+
+<!-- ======== ALL ToolsTips ========= -->
+<script>
+var input1 = document.querySelector('input[name=tags]');
+tagify1 = new Tagify(input1, {
+	whitelist: []
+})
+
+function save_snippet() {
+   {% if user.is_authenticated %}
+   swal("Give a name for your snippet!", {
+      content: {
+         element: "input",
+         attributes: {
+            placeholder: '{{ title }}',
+         },
+       },
+    })
+    .then((value) => {
+      if (value == null || value == "") {
+         swal("Title of snippet can't be empty.")
+      } 
+      else {
+         var update_url = "{% url 'onenlp_app:update' %}";
+         var text = document.querySelector("#input_text").textContent;
+   
+         fetch(update_url , {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+               "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+               "content": text,
+               "title": value
+            }),
+         })
+         .then(response => response.text())
+         .then(data => {
+            console.log(data)
+            swal("Your snippet is successfully created, visit them in dashboard.")
+         })
+         .catch((error) => {
+            console.log(error)
+            swal(error);
+         });
+      }
+
+    });
+
+    {% else %}
+    swal("Please create a account or login first to save the prompt snippet!")
+    {% endif %}
+}
+</script>
+<script>
+   var _home_ = "{% url 'onenlp_app:segmentor' %}";
+   var _sentiment_ = "{% url 'onenlp_app:sentiment' %}";
+   var _phraserMatcher_ = "{% url 'onenlp_app:phraseMatcher' %}";
+   var _summary_ = "{% url 'onenlp_app:summary' %}";
+   var _dependecy_r_ = "{% url 'onenlp_app:dependency' %}";
+   var opposite = "{% url 'onenlp_app:opposite' %}";
+   var _usage_ = "{% url 'onenlp_app:usage' %}";
+</script>
+<script src="{% static 'js/script.js' %}" defer></script>
+{% endblock %} 

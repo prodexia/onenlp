@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block navbar %}
+<div class="navtabs swinginfes">
+   <div class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg"  width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <rect x="4" y="4" width="6" height="6" rx="1" />
+         <rect x="4" y="14" width="6" height="6" rx="1" />
+         <rect x="14" y="14" width="6" height="6" rx="1" />
+         <line x1="14" y1="7" x2="20" y2="7" />
+         <line x1="17" y1="4" x2="17" y2="10" />
+       </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:dashboard' %}'">Dashboard</span>
+   </div>
+   <div id="prof" class="navtab_wrapper navactive">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="12" r="9" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(72 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(144 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(216 12 12)" />
+         <line x1="3.6" y1="15" x2="14.15" y2="15" transform="rotate(288 12 12)" />
+       </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:aboutus' %}'">About</span>
+   </div>
+   {% if user.is_authenticated %}
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="7" r="4" />
+         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      </svg>
+      <span onclick="window.location.href='{% url 'onenlp_app:profile' %}'">Profile</span>
+   </div>
+   {% else %}
+   <div id="prof" class="navtab_wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6A27FF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+         <circle cx="12" cy="7" r="4" />
+         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      </svg>
+      <span onclick="window.location.href='{{ login_url }}'">Login</span>
+   </div>
+   {% endif %}
+</div>
+{% endblock navbar %}
+
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+
+<style>
+   .skills {
+      color: #333;
+      text-decoration: none;
+   }
+</style>
+<div class="about_main">
+   <div class="about-section" style="background: url('{% static 'img/pic.jpg' %}') no-repeat left;">
+      <div class="inner-container">
+        <h1>About OneNLP</h1>
+        <p class="text">
+         OneNLP is a modern <b>Natural processing language</b> IDE that enables you to perform all the NLP tasks visually with a good UI and yes , with ease!
+         <br>
+
+         Forgot all your traditional way of learning NLP , adopt a new clean and fast way , whether it's word tokenization or text manipulation , OneNLP is the name you wanna love to listen!
+         <br>
+         
+         Student friendly, yes you need not to be a programmer , you may write your assignments , notes with all the correction and yes with all your Customizations.
+         <br>
+         
+         No need of gooogling too much, for a silly synonym or antonym, <b>OneNLP</b> has got you covered.
+        </p>
+        <div class="skills">
+          <span><a href="{% url 'onenlp_app:home' %}">IDE</a></span>
+          <span><a href="{% url 'onenlp_app:dashboard' %}">Dashboard</a></span>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+{% endblock content %}
